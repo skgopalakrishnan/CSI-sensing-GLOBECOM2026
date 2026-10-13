@@ -1,0 +1,90 @@
+# Default config for training a 2-D surrogate on NTU-Fi_HAR (LeNet teacher).
+# Replace `adversarial.manifests[].path` with a manifest generated in your own
+# environment before running this workflow.
+
+common:
+  datasets: [NTU-Fi_HAR]
+  root: datasets/
+
+model:
+  architectures: [LeNet]
+  weights_dir_name: model_params_optuna_tiebreak_seed42
+
+data:
+  device: cuda
+  task: classification
+  timesteps: 250
+  base_normalisation: none
+  canon_normalisation: per_subcarrier
+  variant: raw
+  seed: 42
+  batch_sizes:
+    train: 64
+    val: 64
+    test: 64
+
+surrogate:
+  fit_split: train
+  eval_splits: [train, adv_snr20]
+  max_samples_per_split: 6000
+  projection:
+    method: umap
+    n_components: 2
+    n_neighbors: 15
+    min_dist: 0.01
+    metric: euclidean
+    seed: 42
+  # classifier:
+  #   type: logistic
+  #   max_iter: 1000
+  #   solver: lbfgs
+  #   multi_class: multinomial
+  # Example alternatives:
+  # classifier:
+  #   type: svm
+  #   kernel: rbf
+  #   C: 2.0
+  # classifier:
+  #   type: mlp
+  #   hidden_layers: [128, 64]
+  #   activation: relu
+  #   alpha: 0.0001
+  classifier:
+    type: distill_mlp
+    hidden_layers: [128, 64]
+    learning_rate: 0.001
+    weight_decay: 0.0
+    epochs: 200
+    batch_size: 16
+    temperature: 1.0
+  grid:
+    resolution: 400
+    padding: 0.35
+  load_artifacts: null
+  split_aliases:
+    train: "Clean boundary (train)"
+    val: "Clean boundary (val)"
+    adv_snr20: "Adv boundary (SNR=20dB)"
+  plot_clean_splits: true
+
+adversarial:
+  manifests:
+    - path: path/to/adv_viz_manifest.json
+      split_name: adv_snr20
+      data_key: adv
+      label_key: source_labels
+      target_label_key: target_labels
+      max_samples: 600
+      filters:
+        datasets: [NTU-Fi_HAR]
+        models: [lenet]
+        budgets: [snr=20db]
+  batch_size: 256
+
+output:
+  dir: experiments/results/surrogates
+  figure_name: ntu_fi_har_lenet_surrogate.png
+  save_npz: true
+  save_metrics: true
+  save_artifacts: true
+  artifacts_name: ntu_fi_har_lenet_surrogate.pkl

@@ -1,0 +1,55 @@
+# Retrain tie-broken Optuna params across multiple seeds (NTU domain)
+common:
+  experiment_name: ntu-optuna-seed-retrain
+
+selection:
+  # Overwritten by job script parameter line.
+  summary_json: experiments/metadata/optuna_selection/ntu_optuna_tiebreak_summary.json
+
+export:
+  enabled: true
+  clean_weights_dir_name: model_params_optuna_tiebreak_seed42
+  canonical_seed: 42
+  latest_alias: true
+
+run:
+  domain: ntu
+  seeds: [11, 23, 37, 42, 53]
+  deterministic: false
+  require_test_split: true
+  continue_on_error: false
+  # Optional filters:
+  # include_models: [CSITimeSformer]
+  # include_datasets: [NTU-Fi_HAR]
+
+data:
+  device: cuda
+  root: datasets
+  task: classification
+  timesteps: 250
+  base_normalisation: none
+  canon_normalisation: per_subcarrier
+  variant: raw
+  batch_sizes:
+    train: 32
+    test: 128
+  augment: {}
+
+training:
+  learning_rate: 0.001
+  epochs: 80
+  progress_bar: false
+  patience: 15
+  min_epochs: 10
+  monitor_metric: loss
+  min_delta: 0.0005
+  weight_decay: 0.0005
+  grad_clip: null
+  amp: true
+  amp_dtype: float16
+  log_every_epochs: 5
+  optimizer:
+    type: adamw
+  scheduler:
+    type: cosine_warmup
+    warmup_epochs: 5

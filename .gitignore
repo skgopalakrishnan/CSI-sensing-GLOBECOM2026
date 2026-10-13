@@ -1,0 +1,13 @@
+*.pkl
+*.npz
+*.pt
+*.pth
+*.ckpt
+__pycache__/
+*.egg-info/
+.pytest_cache/
+results/
+experiments/hpc_outputs/
+datasets/**/*
+!datasets/**/
+!datasets/**/.gitkeep

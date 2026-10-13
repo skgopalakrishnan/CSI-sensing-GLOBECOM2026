@@ -1,0 +1,83 @@
+common:
+  experiment_name: csi-transfer-optuna
+
+run:
+  targets: [csi_bench]
+
+model:
+  architectures: [MLP, ResNet18, LeNet, BiLSTM, CSITimeSformer]
+  save_trial_weights: true
+  trial_weights:
+    dir_name: trial_weights_transfer_optuna
+    mode: top_k
+    top_k: 3
+    save_every: 2
+    max_saved: 3
+    cleanup_after_study: true
+
+training:
+  learning_rate: 0.001
+  epochs: 100
+  progress_bar: false
+  patience: 15
+  min_epochs: 10
+  monitor_metric: loss
+  min_delta: 0.0005
+  weight_decay: 0.0005
+  grad_clip: null
+  amp: true
+  amp_dtype: float16
+  optimizer:
+    type: adamw
+  scheduler:
+    type: cosine_warmup
+    warmup_epochs: 5
+  log_every_epochs: 5
+
+performance:
+  tf32: true
+  matmul_precision: high
+
+data:
+  device: cuda
+  seed: 42
+
+transfer:
+  directions: [har_to_hid, hid_to_har]
+  base_model_mode: source_supervised
+  finetune_mode: full
+  source:
+    epochs: 60
+    learning_rate: 0.001
+  target:
+    epochs: 100
+    learning_rate: 0.0005
+
+optuna:
+  direction: maximize
+  objective_metric: val_accuracy
+  n_trials: 80
+  timeout: null
+  n_jobs: 1
+  load_if_exists: true
+
+export:
+  save_best_to_datasets: true
+  datasets_root: datasets
+  weights_dir_name: model_params_transfer_optuna_best
+  overwrite_strategy: unique
+  include_full_config: true
+  fail_on_error: false
+
+csi_bench:
+  dataset_root: datasets/CSI-Bench
+  batch_size: 256
+  num_workers: 12
+  pin_memory: true
+  persistent_workers: true
+  prefetch_factor: 4
+  normalisation: zscore
+  splits_dir: splits
+  target_subcarriers: 56
+  target_timesteps: 250
+  only_splits: [train_id, val_id, test_id]

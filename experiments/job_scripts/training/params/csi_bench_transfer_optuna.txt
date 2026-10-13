@@ -1,0 +1,11 @@
+# BASE_CONFIG DIRECTION MODEL_NAME N_TRIALS TIMEOUT SEED DETERMINISTIC
+experiments/config/training/csi_bench/sl/transfer_optuna.yaml har_to_hid MLP 80 null 42 false
+experiments/config/training/csi_bench/sl/transfer_optuna.yaml har_to_hid ResNet18 80 null 42 false
+experiments/config/training/csi_bench/sl/transfer_optuna.yaml har_to_hid LeNet 80 null 42 false
+experiments/config/training/csi_bench/sl/transfer_optuna.yaml har_to_hid BiLSTM 80 null 42 false
+experiments/config/training/csi_bench/sl/transfer_optuna.yaml har_to_hid CSITimeSformer 80 null 42 false
+experiments/config/training/csi_bench/sl/transfer_optuna.yaml hid_to_har MLP 80 null 42 false
+experiments/config/training/csi_bench/sl/transfer_optuna.yaml hid_to_har ResNet18 80 null 42 false
+experiments/config/training/csi_bench/sl/transfer_optuna.yaml hid_to_har LeNet 80 null 42 false
+experiments/config/training/csi_bench/sl/transfer_optuna.yaml hid_to_har BiLSTM 80 null 42 false
+experiments/config/training/csi_bench/sl/transfer_optuna.yaml hid_to_har CSITimeSformer 80 null 42 false

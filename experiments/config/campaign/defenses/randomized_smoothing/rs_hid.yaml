@@ -1,0 +1,118 @@
+common:
+  experiment_name: campaign_rs_hid
+  seed: 42
+
+run:
+  targets: [ntu, csi_bench]
+  task_family: hid
+
+model:
+  architectures: [MLP, LeNet, BiLSTM, ResNet18, CSITimeSformer]
+
+data:
+  device: cuda
+  seed: 42
+
+performance:
+  tf32: true
+  matmul_precision: high
+
+profiling:
+  # Set false to skip one-off model latency/FLOPs profiling in final summary rows.
+  enabled: true
+  # Latency profiling uses a single-example batch with these warmup/timed forwards.
+  latency_warmup: 3
+  latency_repeats: 10
+  # Derived deployment metrics use these defaults unless you override them here.
+  realtime_deadline_ms: 10.0
+  tinyml_memory_budget_kib: 512.0
+  # Stronger embedded SoC assumption used for derived edge-runtime estimates.
+  edge_device_flops_per_s: 1.0e10
+  # FLOPs fields populate only when ptflops is available in the runtime env.
+
+weights:
+  selection: auto
+  strict_load: true
+  source_weights_dir_name: model_params_optuna_tiebreak_seed42
+  rs_weights_dir_name: model_params_rs_hid
+  ntu:
+    datasets_root: datasets
+    source_weights_dir_names: [model_params_optuna_tiebreak_seed42]
+    rs_weights_dir_name: model_params_rs_hid
+  csi_bench:
+    dataset_root: datasets/CSI-Bench
+    source_weights_dir_names: [model_params_optuna_tiebreak_seed42]
+    rs_weights_dir_name: model_params_rs_hid
+
+training:
+  epochs: 20
+  learning_rate: 0.001
+  weight_decay: 0.0
+  amp: false
+  progress_bar: false
+
+certified_robustness:
+  randomized_smoothing:
+    snr_db: 20
+    sigma_global_by_domain_snr_db:
+      ntu:
+        "15": 0.1502298716
+        "20": 0.0844804651
+        "25": 0.0475068567
+      csi_bench:
+        "15": 0.1495348781
+        "20": 0.0840896415
+        "25": 0.0472870805
+    num_noise_vec: 2
+    mix_clean: 0.1
+    noise_type: amplitude
+    amplitude_clamp_min: 0.0
+
+eval:
+  max_batches: null
+  eval_during_training: false
+  smoothed:
+    n: 1024
+    alpha: 0.001
+    batch_size: 256
+    skip: 1
+    max_examples: 512
+    use_tqdm: false
+  certification:
+    n0: 100
+    n: 5000
+    alpha: 0.001
+    batch_size: 256
+    skip: 1
+    max_examples: 256
+    use_tqdm: false
+    radii: [0.0, 0.02, 0.05, 0.1]
+
+results:
+  simple_paths: true
+
+ntu:
+  root: datasets
+  datasets: [NTU-Fi-HumanID]
+  task: classification
+  timesteps: 250
+  base_normalisation: none
+  canon_normalisation: per_subcarrier
+  variant: raw
+  batch_sizes:
+    train: 32
+    test: 128
+  eval_split: test
+
+csi_bench:
+  dataset_root: datasets/CSI-Bench
+  task_names: [HumanIdentification]
+  batch_size: 256
+  num_workers: 12
+  pin_memory: true
+  normalisation: zscore
+  splits_dir: splits
+  target_subcarriers: 56
+  target_timesteps: 250
+  only_splits: [train_id, val_id, test_id]
+  eval_split_name: test_id

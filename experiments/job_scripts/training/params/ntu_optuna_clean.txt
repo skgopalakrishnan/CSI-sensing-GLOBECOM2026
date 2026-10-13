@@ -1,0 +1,11 @@
+# BASE_CONFIG DATASET MODEL N_TRIALS TIMEOUT SEED DETERMINISTIC
+experiments/config/training/ntu/sl/hyperparam_tune.yaml NTU-Fi_HAR MLP 120 null 42 false
+experiments/config/training/ntu/sl/hyperparam_tune.yaml NTU-Fi_HAR ResNet18 120 null 42 false
+experiments/config/training/ntu/sl/hyperparam_tune.yaml NTU-Fi_HAR LeNet 120 null 42 false
+experiments/config/training/ntu/sl/hyperparam_tune.yaml NTU-Fi_HAR BiLSTM 120 null 42 false
+experiments/config/training/ntu/sl/hyperparam_tune.yaml NTU-Fi_HAR CSITimeSformer 120 null 42 false
+experiments/config/training/ntu/sl/hyperparam_tune.yaml NTU-Fi-HumanID MLP 120 null 42 false
+experiments/config/training/ntu/sl/hyperparam_tune.yaml NTU-Fi-HumanID ResNet18 120 null 42 false
+experiments/config/training/ntu/sl/hyperparam_tune.yaml NTU-Fi-HumanID LeNet 120 null 42 false
+experiments/config/training/ntu/sl/hyperparam_tune.yaml NTU-Fi-HumanID BiLSTM 120 null 42 false
+experiments/config/training/ntu/sl/hyperparam_tune.yaml NTU-Fi-HumanID CSITimeSformer 120 null 42 false

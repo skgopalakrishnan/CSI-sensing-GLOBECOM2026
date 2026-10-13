@@ -1,0 +1,65 @@
+common:
+  experiment_name: clean-model-eval
+  seed: 42
+
+run:
+  targets: [csi_bench]
+
+model:
+  architectures: [MLP, ResNet18]
+
+data:
+  device: cuda
+  seed: 42
+
+performance:
+  tf32: true
+  matmul_precision: high
+
+weights:
+  # auto: prefer stable alias (e.g., CSI-Bench_MLP.pt), fallback to latest matching file.
+  # alias: require alias file. latest: choose newest checkpoint in directory.
+  selection: auto
+  strict_load: true
+  ntu:
+    datasets_root: datasets
+    weights_dir_names: [model_params_optuna_tiebreak_seed42, model_params_sl_transfer_latest]
+    # Optional:
+    # checkpoint_glob: "*.pt"
+    # checkpoint_paths:
+    #   NTU-Fi_HAR:
+    #     MLP: datasets/NTU-Fi_HAR/model_params_optuna_tiebreak_seed42/NTU-Fi_HAR_MLP.pt
+  csi_bench:
+    dataset_root: datasets/CSI-Bench
+    weights_dir_names: [model_params_optuna_tiebreak_seed42, model_params_sl_transfer_latest]
+    # Optional:
+    # checkpoint_glob: "*.pt"
+    # checkpoint_paths:
+    #   HumanActivityRecognition:
+    #     MLP: datasets/CSI-Bench/model_params_optuna_tiebreak_seed42/HumanActivityRecognition/CSI-Bench_MLP.pt
+
+ntu:
+  root: datasets
+  datasets: [NTU-Fi_HAR, NTU-Fi-HumanID]
+  task: classification
+  timesteps: 250
+  base_normalisation: none
+  canon_normalisation: per_subcarrier
+  variant: raw
+  batch_sizes:
+    train: 32
+    test: 128
+  augment: {}
+  # Supported: test, val
+  eval_splits: [val, test]
+
+csi_bench:
+  dataset_root: datasets/CSI-Bench
+  task_names: [HumanActivityRecognition, HumanIdentification]
+  batch_size: 256
+  normalisation: zscore
+  splits_dir: splits
+  target_subcarriers: 56
+  target_timesteps: 250
+  # Configure this for alternative splits, e.g. [test_cross_user] with splits_dir: splits_ssl_transfer
+  eval_split_names: [test_id, test_cross_user, test_cross_env, test_cross_device]

@@ -1,0 +1,11 @@
+# BASE_CONFIG TASK_NAME MODEL_NAME N_TRIALS TIMEOUT SEED DETERMINISTIC
+experiments/config/training/csi_bench/sl/hyperparam_tune.yaml HumanActivityRecognition MLP 100 null 42 false
+experiments/config/training/csi_bench/sl/hyperparam_tune.yaml HumanActivityRecognition ResNet18 100 null 42 false
+experiments/config/training/csi_bench/sl/hyperparam_tune.yaml HumanActivityRecognition LeNet 100 null 42 false
+experiments/config/training/csi_bench/sl/hyperparam_tune.yaml HumanActivityRecognition BiLSTM 100 null 42 false
+experiments/config/training/csi_bench/sl/hyperparam_tune.yaml HumanActivityRecognition CSITimeSformer 100 null 42 false
+experiments/config/training/csi_bench/sl/hyperparam_tune.yaml HumanIdentification MLP 100 null 42 false
+experiments/config/training/csi_bench/sl/hyperparam_tune.yaml HumanIdentification ResNet18 100 null 42 false
+experiments/config/training/csi_bench/sl/hyperparam_tune.yaml HumanIdentification LeNet 100 null 42 false
+experiments/config/training/csi_bench/sl/hyperparam_tune.yaml HumanIdentification BiLSTM 100 null 42 false
+experiments/config/training/csi_bench/sl/hyperparam_tune.yaml HumanIdentification CSITimeSformer 100 null 42 false

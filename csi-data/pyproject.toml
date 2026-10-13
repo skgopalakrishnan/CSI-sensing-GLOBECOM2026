@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=67", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "csi-data"
+version = "0.1.0"
+description = "CSI data loading, cleaning, calibration, feature engineering, datasets, and loaders for WiFi sensing"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Shreevanth Krishnaa Gopalakrishnan" }, { name = "Stephen Hailes" }]
+license = { text = "MIT" }
+dependencies = [
+  "numpy>=1.22",
+  "torch>=2.0",
+  "torchvision>=0.15",
+  "pandas>=2.2.3",
+  "scipy>=1.7",
+  "h5py>=3.10",
+]
+
+[project.optional-dependencies]
+eda = [
+  "matplotlib>=3.7",
+  "scikit-learn>=1.1",
+  "umap-learn>=0.5",
+]
+test = [
+  "pytest>=7.0",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["csi*"]
+namespaces = true

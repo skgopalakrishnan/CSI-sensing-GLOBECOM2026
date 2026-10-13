@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=67", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "csi-models"
+version = "0.1.0"
+description = "CSI model architectures, training utilities, and metrics for WiFi sensing"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Shreevanth Krishnaa Gopalakrishnan" }, { name = "Stephen Hailes" }]
+license = { text = "MIT" }
+dependencies = [
+  "numpy>=1.22",
+  "torch>=2.0",
+  "torchvision>=0.15",
+  "einops>=0.6",
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+analysis = [
+  "matplotlib>=3.7",
+  "scipy>=1.7",
+  "tqdm>=4.65",
+]
+test = [
+  "pytest>=7.0",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["csi*"]
+namespaces = true

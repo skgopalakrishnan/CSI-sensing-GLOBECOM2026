@@ -1,0 +1,25 @@
+# Shared dependencies for the CSI-sensing code release.
+#
+# Install these first, then install the local packages in editable mode:
+#   pip install -e ./csi-data -e ./csi-models -e ./csi-attacks -e ./csi-defenses
+
+# Core runtime stack
+numpy>=1.24
+scipy>=1.10
+torch>=2.0
+torchvision>=0.15
+einops>=0.6
+PyYAML>=6.0
+pandas>=2.2
+h5py>=3.10
+scikit-learn>=1.1
+tqdm>=4.65
+
+# Optional helpers used by selected analysis, plotting, and tuning utilities
+matplotlib>=3.7
+optuna>=3.5
+umap-learn>=0.5
+ptflops>=0.7
+
+# Tests
+pytest>=7.0

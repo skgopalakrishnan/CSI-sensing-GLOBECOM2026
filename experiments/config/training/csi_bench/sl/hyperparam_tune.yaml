@@ -1,0 +1,76 @@
+# CSI-Bench supervised Optuna tuning (HAR + HID)
+common:
+  dataset_root: datasets/CSI-Bench
+  task_names: [HumanActivityRecognition, HumanIdentification]
+  experiment_name: csi-bench-optuna
+  seed: 42
+
+model:
+  architectures: [MLP, ResNet18, LeNet, BiLSTM, CSITimeSformer]
+  save_trial_weights: true
+  trial_weights:
+    # top_k | best_only | all
+    mode: top_k
+    top_k: 3
+    # Save only every Nth trial checkpoint (e.g., 2 => 0,2,4,...)
+    save_every: 2
+    # Optional hard cap after retention; null disables cap
+    max_saved: 3
+    cleanup_after_study: true
+
+training:
+  learning_rate: 0.001
+  epochs: 80
+  progress_bar: false
+  patience: 15
+  min_epochs: 10
+  monitor_metric: loss
+  min_delta: 0.0005
+  weight_decay: 0.0005
+  grad_clip: null
+  amp: true
+  amp_dtype: float16
+  log_every_epochs: 5
+  optimizer:
+    type: adamw
+  scheduler:
+    type: cosine_warmup
+    warmup_epochs: 5
+
+data:
+  device: cuda
+  batch_size: 256
+  num_workers: 12
+  pin_memory: true
+  normalisation: zscore
+  splits_dir: splits
+  # HAR/HID use 56 subcarriers; we train at 250 timesteps for consistency with NTU trial runs.
+  target_subcarriers: 56
+  target_timesteps: 250
+  only_splits: [train_id, val_id, test_id]
+
+optuna:
+  study_name: csi_bench_sl_tuning
+  n_trials: 100
+  timeout: null
+  n_jobs: 1
+  direction: maximize
+  objective_metric: val_accuracy
+  load_if_exists: true
+  storage: null
+  gc_after_trial: true
+  sampler_seed: 42
+  pruner:
+    enabled: true
+    n_startup_trials: 10
+    n_warmup_steps: 0
+    interval_steps: 1
+
+export:
+  save_best_to_datasets: true
+  datasets_root: datasets
+  weights_dir_name: model_params_optuna_best
+  # unique: never overwrite existing file; replace: overwrite same name; skip: keep existing and skip copy
+  overwrite_strategy: unique
+  include_full_config: true
+  fail_on_error: false

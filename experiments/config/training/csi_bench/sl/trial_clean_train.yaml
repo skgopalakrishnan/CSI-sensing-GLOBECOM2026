@@ -1,0 +1,45 @@
+common:
+  experiment_name: clean-test-weights
+
+run:
+  targets: [csi_bench]
+
+model:
+  architectures: [CSITimeSformer]
+  save_weights: true
+  dataset_weights_dir_name: model_params_optuna_tiebreak_seed42
+
+training:
+  learning_rate: 0.001
+  epochs: 100
+  progress_bar: false
+  patience: 15
+  min_epochs: 10
+  monitor_metric: loss
+  min_delta: 0.0005
+  weight_decay: 0.0005
+  grad_clip: null
+  amp: true
+  amp_dtype: float16
+  optimizer:
+    type: adamw
+  scheduler:
+    type: cosine_warmup
+    warmup_epochs: 5
+  log_every_epochs: 5
+
+data:
+  device: cuda
+  seed: 42
+
+csi_bench:
+  dataset_root: datasets/CSI-Bench
+  task_names: [HumanActivityRecognition, HumanIdentification]
+  batch_size: 256
+  num_workers: 12
+  pin_memory: true
+  normalisation: zscore
+  splits_dir: splits
+  target_subcarriers: 56
+  target_timesteps: 250
+  only_splits: [train_id, val_id, test_id]

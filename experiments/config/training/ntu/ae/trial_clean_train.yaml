@@ -1,0 +1,144 @@
+common:
+  experiment_name: clean-ae-test-weights
+
+run:
+  targets: [ntu]
+  stages: [pretrain, classify]
+
+model:
+  architectures: [AEHead_TCN, AEHead_GRU, AEHead_SSM]
+  save_encoder_weights: true
+  save_classifier_weights: true
+  encoder_weights_dir_name: autoencoder_params_ae_seed42
+  dataset_weights_dir_name: model_params_ae_seed42
+  encoder:
+    type: tiny_f_stride
+    config:
+      type: tiny_f_stride
+      hidden_dims: [16, 32]
+      encoder_kernels:
+        - [5, 3]
+        - [3, 3]
+      encoder_strides:
+        - [2, 1]
+        - [2, 1]
+      temporal_kernel: 3
+      temporal_dilations:
+        - [1, 2]
+        - [2, 4]
+      dropout: 0.10
+      latent_channels: 6
+      latent_freq: 8
+  heads:
+    tcn:
+      project_dim: 64
+      dropout: 0.1
+      tcn:
+        dilations: [1, 2]
+        kernel_size: 3
+        dropout: 0.1
+        final_dropout: 0.1
+        depthwise: true
+        pre_pool_kernel: 2
+        channel_reduction: [64]
+    gru:
+      project_dim: 64
+      dropout: 0.1
+      gru:
+        hidden_size: 64
+        num_layers: 1
+        bidirectional: true
+        dropout: 0.05
+        pool: attention
+        attention_hidden: 64
+        final_dropout: 0.1
+        pre_pool_kernel: 2
+        feature_mlp: [64]
+    ssm:
+      project_dim: 64
+      dropout: 0.1
+      ssm:
+        state_dim: 64
+        num_layers: 2
+        dropout: 0.05
+        activation: gelu
+        pre_pool_kernel: 2
+        aggregation: mean
+        feature_mlp: [64]
+
+training:
+  pretrain:
+    learning_rate: 0.001
+    weight_decay: 0.0005
+    epochs: 100
+    mask_focus: 1.0
+    mask_focus_final: 0.0
+    mask_focus_decay_portion: 0.4
+    contractive_lambda: 0.0002
+    contractive_interval: 4
+    contractive_sample_ratio: 0.50
+    grad_clip: 1.0
+    progress_bar: false
+    patience: 25
+    min_epochs: 10
+    monitor_metric: loss
+    min_delta: 0.0001
+    optimizer:
+      type: adam
+    scheduler:
+      type: reduce_on_plateau
+      mode: min
+      factor: 0.5
+      patience: 5
+      threshold: 1.0e-04
+      min_lr: 1.0e-05
+  transfer:
+    progress_bar: false
+    grad_clip: 1.0
+    label_smoothing: 0.05
+    weight_decay: 0.0005
+    patience: 10
+    min_epochs: 6
+    monitor_metric: loss
+    min_delta: 0.0001
+    optimizer:
+      type: adamw
+    phase_a:
+      epochs: 10
+      head_lr: 0.002
+      freeze_encoder: true
+      scheduler:
+        type: reduce_on_plateau
+        mode: min
+        factor: 0.5
+        patience: 5
+        threshold: 1.0e-04
+        min_lr: 1.0e-05
+    phase_b:
+      epochs: 30
+      head_lr: 0.002
+      encoder_lr: 0.0002
+      freeze_encoder: false
+      scheduler:
+        type: reduce_on_plateau
+        mode: min
+        factor: 0.5
+        patience: 5
+        threshold: 1.0e-04
+        min_lr: 1.0e-05
+
+data:
+  device: cuda
+  seed: 42
+
+ntu:
+  root: datasets
+  datasets: [NTU-Fi_HAR, NTU-Fi-HumanID]
+  timesteps: 250
+  base_normalisation: none
+  canon_normalisation: per_subcarrier
+  variant: raw
+  batch_sizes:
+    train: 32
+    test: 128
+  augment: {}

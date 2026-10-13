@@ -1,0 +1,11 @@
+# BASE_CONFIG SUMMARY_JSON SEEDS_CSV DETERMINISTIC AUTO_DATALOADER INCLUDE_MODEL INCLUDE_DATASET INCLUDE_TASK
+experiments/config/training/ntu/sl/seed_retrain_from_optuna.yaml experiments/metadata/optuna_selection/ntu_optuna_tiebreak_summary.json 42,11,23,37,53 false 1 MLP - -
+experiments/config/training/ntu/sl/seed_retrain_from_optuna.yaml experiments/metadata/optuna_selection/ntu_optuna_tiebreak_summary.json 42,11,23,37,53 false 1 ResNet18 - -
+experiments/config/training/ntu/sl/seed_retrain_from_optuna.yaml experiments/metadata/optuna_selection/ntu_optuna_tiebreak_summary.json 42,11,23,37,53 false 1 LeNet - -
+experiments/config/training/ntu/sl/seed_retrain_from_optuna.yaml experiments/metadata/optuna_selection/ntu_optuna_tiebreak_summary.json 42,11,23,37,53 false 1 BiLSTM - -
+experiments/config/training/ntu/sl/seed_retrain_from_optuna.yaml experiments/metadata/optuna_selection/ntu_optuna_tiebreak_summary.json 42,11,23,37,53 false 1 CSITimeSformer - -
+experiments/config/training/csi_bench/sl/seed_retrain_from_optuna.yaml experiments/metadata/optuna_selection/csi_bench_optuna_tiebreak_summary.json 42,11,23,37,53 false 1 MLP - -
+experiments/config/training/csi_bench/sl/seed_retrain_from_optuna.yaml experiments/metadata/optuna_selection/csi_bench_optuna_tiebreak_summary.json 42,11,23,37,53 false 1 ResNet18 - -
+experiments/config/training/csi_bench/sl/seed_retrain_from_optuna.yaml experiments/metadata/optuna_selection/csi_bench_optuna_tiebreak_summary.json 42,11,23,37,53 false 1 LeNet - -
+experiments/config/training/csi_bench/sl/seed_retrain_from_optuna.yaml experiments/metadata/optuna_selection/csi_bench_optuna_tiebreak_summary.json 42,11,23,37,53 false 1 BiLSTM - -
+experiments/config/training/csi_bench/sl/seed_retrain_from_optuna.yaml experiments/metadata/optuna_selection/csi_bench_optuna_tiebreak_summary.json 42,11,23,37,53 false 1 CSITimeSformer - -

@@ -1,0 +1,87 @@
+common:
+  experiment_name: campaign_whitebox_hid_constrained
+  seed: 42
+
+run:
+  targets: [ntu, csi_bench]
+
+model:
+  architectures: [MLP, LeNet, BiLSTM, ResNet18, CSITimeSformer]
+
+data:
+  device: cuda
+  seed: 42
+
+performance:
+  tf32: true
+  matmul_precision: high
+
+profiling:
+  # Set false to skip one-off model latency/FLOPs profiling in final summary rows.
+  enabled: true
+  # Latency profiling uses a single-example batch with these warmup/timed forwards.
+  latency_warmup: 3
+  latency_repeats: 10
+  # Derived deployment metrics use these defaults unless you override them here.
+  realtime_deadline_ms: 10.0
+  tinyml_memory_budget_kib: 512.0
+  # Stronger embedded SoC assumption used for derived edge-runtime estimates.
+  edge_device_flops_per_s: 1.0e10
+  # FLOPs fields populate only when ptflops is available in the runtime env.
+
+weights:
+  selection: auto
+  strict_load: true
+  weights_dir_name: model_params_optuna_tiebreak_seed42
+  ntu:
+    datasets_root: datasets
+    weights_dir_names: [model_params_optuna_tiebreak_seed42]
+  csi_bench:
+    dataset_root: datasets/CSI-Bench
+    weights_dir_names: [model_params_optuna_tiebreak_seed42]
+
+attack:
+  method: apgdt
+  type: targeted
+  task_family: hid
+  loss: dlr
+  target_class_sweep: true
+  n_target_classes: 5
+  steps: 100
+  n_restarts: 5
+  random_start: true
+  snr_dB: [40, 20, 10, 5]
+  constraint_mode: constrained
+  use_mmd_loss: true
+  mmd_weight: 0.05
+
+eval:
+  max_batches: null
+
+results:
+  simple_paths: true
+
+ntu:
+  root: datasets
+  datasets: [NTU-Fi-HumanID]
+  task: classification
+  timesteps: 250
+  base_normalisation: none
+  canon_normalisation: per_subcarrier
+  variant: raw
+  batch_sizes:
+    train: 32
+    test: 128
+  eval_split: test
+
+csi_bench:
+  dataset_root: datasets/CSI-Bench
+  task_names: [HumanIdentification]
+  batch_size: 256
+  num_workers: 12
+  pin_memory: true
+  normalisation: zscore
+  splits_dir: splits
+  target_subcarriers: 56
+  target_timesteps: 250
+  eval_split_name: test_id

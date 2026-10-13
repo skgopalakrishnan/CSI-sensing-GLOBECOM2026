@@ -1,0 +1,61 @@
+common:
+  experiment_name: sl-transfer-csi-bench
+
+run:
+  targets: [csi_bench]
+
+model:
+  architectures: [MLP, ResNet18, LeNet, BiLSTM, CSITimeSformer]
+  save_weights: true
+  dataset_weights_dir_name: model_params_sl_transfer_latest
+
+training:
+  learning_rate: 0.001
+  epochs: 100
+  progress_bar: false
+  patience: 15
+  min_epochs: 10
+  monitor_metric: loss
+  min_delta: 0.0005
+  weight_decay: 0.0005
+  grad_clip: null
+  amp: true
+  amp_dtype: float16
+  optimizer:
+    type: adamw
+  scheduler:
+    type: cosine_warmup
+    warmup_epochs: 5
+  log_every_epochs: 5
+
+performance:
+  tf32: true
+  matmul_precision: high
+
+data:
+  device: cuda
+  seed: 42
+
+transfer:
+  directions: [hid_to_har]
+  base_model_mode: source_supervised
+  finetune_mode: full
+  source:
+    epochs: 60
+    learning_rate: 0.001
+  target:
+    epochs: 100
+    learning_rate: 0.0005
+
+csi_bench:
+  dataset_root: datasets/CSI-Bench
+  batch_size: 256
+  num_workers: 12
+  pin_memory: true
+  persistent_workers: true
+  prefetch_factor: 4
+  normalisation: zscore
+  splits_dir: splits
+  target_subcarriers: 56
+  target_timesteps: 250
+  only_splits: [train_id, val_id, test_id]

@@ -1,0 +1,46 @@
+common:
+  experiment_name: clean-test-weights
+
+run:
+  targets: [ntu]
+
+model:
+  architectures: [MLP, ResNet18, LeNet, BiLSTM, CSITimeSformer]
+  save_weights: true
+  dataset_weights_dir_name: model_params_optuna_tiebreak_seed42
+
+training:
+  learning_rate: 0.001
+  epochs: 100
+  progress_bar: false
+  patience: 15
+  min_epochs: 10
+  monitor_metric: loss
+  min_delta: 0.0005
+  weight_decay: 0.0005
+  grad_clip: null
+  amp: true
+  amp_dtype: float16
+  optimizer:
+    type: adamw
+  scheduler:
+    type: cosine_warmup
+    warmup_epochs: 5
+  log_every_epochs: 5
+
+data:
+  device: cuda
+  seed: 42
+
+ntu:
+  root: datasets
+  datasets: [NTU-Fi_HAR, NTU-Fi-HumanID]
+  task: classification
+  timesteps: 250
+  base_normalisation: none
+  canon_normalisation: per_subcarrier
+  variant: raw
+  batch_sizes:
+    train: 32
+    test: 128
+  augment: {}
